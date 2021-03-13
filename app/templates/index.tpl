@@ -61,7 +61,8 @@ $(function(){
 
 
     var oneSide = Number($('#distanceToRun').val())/4;
-    var angle = 30;
+
+    var angle = cosineTheorem();
     var point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
     var point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
     var point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
@@ -137,5 +138,58 @@ function vincenty(lat1,lng1,alpha12,length){
     return [radDo(Math.atan(x / y)),radDo(lng1 + omega)];
 }
 
+
+function distance($lat1, $lon1, $lat2, $lon2, $mode=true)
+{
+    // 緯度経度をラジアンに変換
+    $radLat1 = doRad($lat1); // 緯度１
+    $radLon1 = doRad($lon1); // 経度１
+    $radLat2 = doRad($lat2); // 緯度２
+    $radLon2 = doRad($lon2); // 経度２
+
+    // 緯度差
+    $radLatDiff = $radLat1 - $radLat2;
+
+    // 経度差算
+    $radLonDiff = $radLon1 - $radLon2;
+
+    // 平均緯度
+    $radLatAve = ($radLat1 + $radLat2) / 2.0;
+
+    // 測地系による値の違い
+    $a = $mode ? 6378137.0 : 6377397.155; // 赤道半径
+    $b = $mode ? 6356752.314140356 : 6356078.963; // 極半径
+    //$e2 = ($a*$a - $b*$b) / ($a*$a);
+    $e2 = $mode ? 0.00669438002301188 : 0.00667436061028297; // 第一離心率^2
+    //$a1e2 = $a * (1 - $e2);
+    $a1e2 = $mode ? 6335439.32708317 : 6334832.10663254; // 赤道上の子午線曲率半径
+
+    $sinLat = Math.sin($radLatAve);
+    $W2 = 1.0 - $e2 * ($sinLat*$sinLat);
+    $M = $a1e2 / (Math.sqrt($W2)*$W2); // 子午線曲率半径M
+    $N = $a / Math.sqrt($W2); // 卯酉線曲率半径
+
+    $t1 = $M * $radLatDiff;
+    $t2 = $N * Math.cos($radLatAve) * $radLonDiff;
+    $dist = Math.sqrt(($t1*$t1) + ($t2*$t2));
+
+    return $dist;
+}
+
+function cosineTheorem(){
+	//3辺の長さ
+	var a = Number($('#distanceToRun').val())/4;
+	var b = Number($('#distanceToRun').val())/4;
+	var c = 1500; //TODO: 画面上からパラメータ指定できるようにする
+
+	//余弦定理
+	var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
+
+	//角度に変換
+	var angle = Math.round(Math.acos(radian) * (180/Math.PI));
+
+	console.log(90-angle);
+	return 90-angle;
+}
 
 </script>
