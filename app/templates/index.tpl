@@ -21,11 +21,12 @@
 var map;
 var marker;
 var circle;
+var circleUpperLimit;
 var radius;
 var Polyline;
 var positionCenterLat = 35.6809591;
 var positionCenterLng = 139.7673068;
-var myLatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
+var LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
 var mapDiv = document.getElementById("mapCanvas");
 
 $(function(){
@@ -36,27 +37,15 @@ $(function(){
     },1000);
 
     map = new google.maps.Map(mapDiv, {
-        center: myLatLng,
+        center: LatLng,
         zoom: 14,
     });
 
     marker = new google.maps.Marker({
         map: map,
-        position: myLatLng,
+        position: LatLng,
         draggable: true,
         zIndex: 10
-    });
-
-    radius = Number($('#distanceToRun').val())/2;
-    circle = new google.maps.Circle({
-        center: myLatLng,
-        fillColor: '#ff0000',
-        fillOpacity: .2,
-        map: map,
-        radius: radius,//半径(m)
-        strokeColor: '#ff0000',
-        strokeOpacity: 0,
-        strokeWeight: 1
     });
 
 
@@ -72,8 +61,33 @@ $(function(){
         new google.maps.LatLng(point1[0], point1[1]),
         new google.maps.LatLng(point2[0], point2[1]),
         new google.maps.LatLng(point3[0], point3[1]),
-        new google.maps.LatLng(positionCenterLat, positionCenterLng),
+        new google.maps.LatLng(positionCenterLat, positionCenterLng)
     ];
+
+
+    radius = Number($('#distanceToRun').val())/2;
+    circle = new google.maps.Circle({
+        center: LatLng,
+        fillColor: '#ff0000',
+        fillOpacity: .2,
+        map: map,
+        radius: distance(positionCenterLat, positionCenterLng,point2[0], point2[1]),//半径(m)
+        strokeColor: '#ff0000',
+        strokeOpacity: 0,
+        strokeWeight: 1
+    });
+
+    circleUpperLimit = new google.maps.Circle({
+        center: LatLng,
+        fillColor: '#0000ff',
+        fillOpacity: .2,
+        map: map,
+        radius: radius,//半径(m)
+        strokeColor: '#0000ff',
+        strokeOpacity: 0,
+        strokeWeight: 1
+    });
+
     Polyline = new google.maps.Polyline({
         path: positions,
         strokeColor: '#00FF00',
@@ -88,10 +102,19 @@ function rebuilding(){
     positionCenterLat = marker.getPosition().lat();
     positionCenterLng = marker.getPosition().lng();
 
-    //circleを再セット
+    //circleUpperLimitを再セット
+    var oneSide = Number($('#distanceToRun').val())/4;
+    var angle = cosineTheorem();
+    var point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
+    var point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
+    var point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
     circle.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
+    circle.setRadius(distance(positionCenterLat, positionCenterLng,point2[0], point2[1]));
+
+    //circleUpperLimitを再セット
+    circleUpperLimit.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
     radius = Number($('#distanceToRun').val())/2;
-    circle.setRadius(radius);
+    circleUpperLimit.setRadius(radius);
 }
 
 function doRad(x){
@@ -177,19 +200,18 @@ function distance($lat1, $lon1, $lat2, $lon2, $mode=true)
 }
 
 function cosineTheorem(){
-	//3辺の長さ
-	var a = Number($('#distanceToRun').val())/4;
-	var b = Number($('#distanceToRun').val())/4;
-	var c = 1500; //TODO: 画面上からパラメータ指定できるようにする
+    //3辺の長さ
+    var a = Number($('#distanceToRun').val())/4;
+    var b = Number($('#distanceToRun').val())/4;
+    var c = 1500; //TODO: 画面上からパラメータ指定できるようにする
 
-	//余弦定理
-	var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
+    //余弦定理
+    var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
 
-	//角度に変換
-	var angle = Math.round(Math.acos(radian) * (180/Math.PI));
+    //角度に変換
+    var angle = Math.round(Math.acos(radian) * (180/Math.PI));
 
-	console.log(90-angle);
-	return 90-angle;
+    return 90-angle;
 }
 
 </script>
