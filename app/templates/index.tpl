@@ -10,6 +10,7 @@
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
+	<button onclick="rebuilding()">Rebuilding</button>
 	<div id="mapCanvas"></div>
 </body>
 </html>
@@ -52,6 +53,14 @@ $(function(){
 		strokeOpacity: 0,
 		strokeWeight: 1
 	});
-
 });
+
+function rebuilding(){
+	//現在のマーカー位置をセットする
+	positionCenterLat = marker.getPosition().lat();
+	positionCenterLng = marker.getPosition().lng();
+
+	//circleを再セット
+	circle.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
+}
 </script>
