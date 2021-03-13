@@ -1,3 +1,4 @@
 /vendor/
 /app/templates_c/
 /app/cache/
+/app/node_modules/
