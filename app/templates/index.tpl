@@ -10,8 +10,10 @@
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
-	<button onclick="rebuilding()">Rebuilding</button>
-	<div id="mapCanvas"></div>
+	<input name="distanceToRun" id="distanceToRun" value="5000">
+    <button onclick="rebuilding()">Rebuilding</button>
+    <div id="mapCanvas"></div>
+
 </body>
 </html>
 
@@ -19,6 +21,7 @@
 var map;
 var marker;
 var circle;
+var radius;
 var positionCenterLat = 35.6809591;
 var positionCenterLng = 139.7673068;
 var myLatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
@@ -43,24 +46,27 @@ $(function(){
         zIndex: 10
     });
 
+    radius = Number($('#distanceToRun').val())/2;
     circle = new google.maps.Circle({
-		center: myLatLng,
-		fillColor: '#ff0000',
-		fillOpacity: .2,
-		map: map,
-		radius: 2500,
-		strokeColor: '#ff0000',
-		strokeOpacity: 0,
-		strokeWeight: 1
-	});
+        center: myLatLng,
+        fillColor: '#ff0000',
+        fillOpacity: .2,
+        map: map,
+        radius: radius,//半径(m)
+        strokeColor: '#ff0000',
+        strokeOpacity: 0,
+        strokeWeight: 1
+    });
 });
 
 function rebuilding(){
-	//現在のマーカー位置をセットする
-	positionCenterLat = marker.getPosition().lat();
-	positionCenterLng = marker.getPosition().lng();
+    //現在のマーカー位置をセットする
+    positionCenterLat = marker.getPosition().lat();
+    positionCenterLng = marker.getPosition().lng();
 
-	//circleを再セット
-	circle.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
+    //circleを再セット
+    circle.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
+    radius = Number($('#distanceToRun').val())/2;
+    circle.setRadius(radius);
 }
 </script>
