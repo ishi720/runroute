@@ -1,0 +1,12 @@
+{
+    "name": "user/runroute",
+    "authors": [
+        {
+            "name": "ishi720",
+            "email": "ishizuka720@gmail.com"
+        }
+    ],
+    "require": {
+        "smarty/smarty": "^3.1"
+    }
+}
