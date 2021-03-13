@@ -16,6 +16,8 @@
 
 <script type="text/javascript">
 var map;
+var marker;
+var circle;
 var positionCenterLat = 35.6809591;
 var positionCenterLng = 139.7673068;
 var myLatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
@@ -28,9 +30,28 @@ $(function(){
         );
     },1000);
 
-    map = new google.maps.Map( mapDiv, {
+    map = new google.maps.Map(mapDiv, {
         center: myLatLng,
         zoom: 14,
     });
+
+    marker = new google.maps.Marker({
+        map: map,
+        position: myLatLng,
+        draggable: true,
+        zIndex: 10
+    });
+
+    circle = new google.maps.Circle({
+		center: myLatLng,
+		fillColor: '#ff0000',
+		fillOpacity: .2,
+		map: map,
+		radius: 2500,
+		strokeColor: '#ff0000',
+		strokeOpacity: 0,
+		strokeWeight: 1
+	});
+
 });
 </script>
