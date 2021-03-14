@@ -11,6 +11,7 @@
 </head>
 <body>
     <input name="distanceToRun" id="distanceToRun" value="5000">
+    <input name="distanceToPoint2" id="distanceToPoint2" value="1500">
     <button onclick="rebuilding()">Rebuilding</button>
     <div id="mapCanvas"></div>
 
@@ -26,6 +27,7 @@ var radius;
 var Polyline;
 var positionCenterLat = 35.6809591;
 var positionCenterLng = 139.7673068;
+var distanceToPoint2;
 var LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
 var mapDiv = document.getElementById("mapCanvas");
 
@@ -115,6 +117,30 @@ function rebuilding(){
     circleUpperLimit.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
     radius = Number($('#distanceToRun').val())/2;
     circleUpperLimit.setRadius(radius);
+
+
+    Polyline.setMap(null);
+    var oneSide = Number($('#distanceToRun').val())/4;
+
+    var angle = cosineTheorem();
+    var point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
+    var point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
+    var point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
+
+    var positions = [
+        new google.maps.LatLng(positionCenterLat, positionCenterLng),
+        new google.maps.LatLng(point1[0], point1[1]),
+        new google.maps.LatLng(point2[0], point2[1]),
+        new google.maps.LatLng(point3[0], point3[1]),
+        new google.maps.LatLng(positionCenterLat, positionCenterLng)
+    ];
+    Polyline = new google.maps.Polyline({
+        path: positions,
+        strokeColor: '#00FF00',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+    Polyline.setMap(map);
 }
 
 function doRad(x){
@@ -203,7 +229,7 @@ function cosineTheorem(){
     //3辺の長さ
     var a = Number($('#distanceToRun').val())/4;
     var b = Number($('#distanceToRun').val())/4;
-    var c = 1500; //TODO: 画面上からパラメータ指定できるようにする
+    var c = Number($('#distanceToPoint2').val());
 
     //余弦定理
     var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
