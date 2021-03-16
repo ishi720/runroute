@@ -96,6 +96,29 @@ $(function(){
         strokeOpacity: 1.0,
         strokeWeight: 2
     });
+
+    //ルートの生成
+    var directionsService = new google.maps.DirectionsService;
+    var directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        preserveViewport: true, 
+    });
+    directionsService.route({
+        origin: new google.maps.LatLng(positionCenterLat, positionCenterLng),
+        destination: new google.maps.LatLng(positionCenterLat, positionCenterLng),
+        waypoints: [
+            { location: new google.maps.LatLng(point1[0], point1[1])},
+            { location: new google.maps.LatLng(point2[0], point2[1])},
+            { location: new google.maps.LatLng(point3[0], point3[1])}
+        ],
+        travelMode: google.maps.TravelMode.WALKING
+    }, function(response, status) {
+        if (status === google.maps.DirectionsStatus.OK) {
+            directionsRenderer.setMap(map);
+            directionsRenderer.setDirections(response); 
+        }
+    });
+
     Polyline.setMap(map);
 });
 
