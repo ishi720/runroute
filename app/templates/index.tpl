@@ -12,7 +12,7 @@
 <body>
     <input name="distanceToRun" id="distanceToRun" value="5000">
     <input name="distanceToPoint2" id="distanceToPoint2" value="1500">
-    <button onclick="rebuilding()">Rebuilding</button>
+    <button onclick="routeEdit()">Route Edit</button>
     <div id="mapCanvas"></div>
 
 </body>
@@ -30,6 +30,12 @@ var positionCenterLng = 139.7673068;
 var distanceToPoint2;
 var LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
 var mapDiv = document.getElementById("mapCanvas");
+var angle;
+var point1;
+var point2;
+var point3;
+var directionsService;
+var directionsRenderer;
 
 $(function(){
     setTimeout( function(){
@@ -50,13 +56,18 @@ $(function(){
         zIndex: 10
     });
 
+    // markerドラッグ後のイベント
+    marker.addListener("dragend", function () {
+        rebuilding();
+    });
+
 
     var oneSide = Number($('#distanceToRun').val())/4;
 
-    var angle = cosineTheorem();
-    var point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
-    var point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
-    var point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
+    angle = cosineTheorem();
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
 
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -97,9 +108,14 @@ $(function(){
         strokeWeight: 2
     });
 
+    Polyline.setMap(map);
+});
+
+function routeEdit(waypoints){
+
     //ルートの生成
-    var directionsService = new google.maps.DirectionsService;
-    var directionsRenderer = new google.maps.DirectionsRenderer({
+    directionsService = new google.maps.DirectionsService;
+    directionsRenderer = new google.maps.DirectionsRenderer({
         map: map,
         preserveViewport: true, 
     });
@@ -118,9 +134,8 @@ $(function(){
             directionsRenderer.setDirections(response); 
         }
     });
+}
 
-    Polyline.setMap(map);
-});
 
 function rebuilding(){
     //現在のマーカー位置をセットする
@@ -129,10 +144,10 @@ function rebuilding(){
 
     //circleUpperLimitを再セット
     var oneSide = Number($('#distanceToRun').val())/4;
-    var angle = cosineTheorem();
-    var point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
-    var point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
-    var point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
+    angle = cosineTheorem();
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
     circle.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
     circle.setRadius(distance(positionCenterLat, positionCenterLng,point2[0], point2[1]));
 
@@ -145,10 +160,10 @@ function rebuilding(){
     Polyline.setMap(null);
     var oneSide = Number($('#distanceToRun').val())/4;
 
-    var angle = cosineTheorem();
-    var point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
-    var point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
-    var point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
+    angle = cosineTheorem();
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
 
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -164,6 +179,10 @@ function rebuilding(){
         strokeWeight: 2
     });
     Polyline.setMap(map);
+
+    if (directionsRenderer.getMap() != null) {
+        directionsRenderer.setMap(null);
+    }
 }
 
 function doRad(x){
