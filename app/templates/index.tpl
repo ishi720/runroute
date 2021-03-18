@@ -159,14 +159,7 @@ function rebuilding(){
     radius = Number($('#distanceToRun').val())/2;
     circleUpperLimit.setRadius(radius);
 
-
     Polyline.setMap(null);
-    var oneSide = Number($('#distanceToRun').val())/4;
-
-    angle = cosineTheorem();
-    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
-    point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
-    point3 = vincenty(point2[0],point2[1],-(180-(90-angle))+direction,oneSide);
 
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
