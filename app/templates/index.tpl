@@ -12,6 +12,7 @@
 <body>
     <input name="distanceToRun" id="distanceToRun" value="5000">
     <input name="distanceToPoint2" id="distanceToPoint2" value="1500">
+    <input name="direction" id="direction" value="45">
     <button onclick="routeEdit()">Route Edit</button>
     <div id="mapCanvas"></div>
 
@@ -31,6 +32,7 @@ var distanceToPoint2;
 var LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
 var mapDiv = document.getElementById("mapCanvas");
 var angle;
+var direction;
 var point1;
 var point2;
 var point3;
@@ -63,11 +65,12 @@ $(function(){
 
 
     var oneSide = Number($('#distanceToRun').val())/4;
+    var direction = Number($('#direction').val());
 
     angle = cosineTheorem();
-    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
-    point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
-    point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angle))+direction,oneSide);
 
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -76,7 +79,6 @@ $(function(){
         new google.maps.LatLng(point3[0], point3[1]),
         new google.maps.LatLng(positionCenterLat, positionCenterLng)
     ];
-
 
     radius = Number($('#distanceToRun').val())/2;
     circle = new google.maps.Circle({
@@ -144,10 +146,11 @@ function rebuilding(){
 
     //circleUpperLimitを再セット
     var oneSide = Number($('#distanceToRun').val())/4;
+    direction = Number($('#direction').val());
     angle = cosineTheorem();
-    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
-    point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
-    point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angle))+direction,oneSide);
     circle.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
     circle.setRadius(distance(positionCenterLat, positionCenterLng,point2[0], point2[1]));
 
@@ -161,9 +164,9 @@ function rebuilding(){
     var oneSide = Number($('#distanceToRun').val())/4;
 
     angle = cosineTheorem();
-    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle,oneSide);
-    point2 = vincenty(point1[0],point1[1],-(90-angle),oneSide);
-    point3 = vincenty(point2[0],point2[1],-(180-(90-angle)),oneSide);
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angle))+direction,oneSide);
 
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
