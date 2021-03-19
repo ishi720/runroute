@@ -119,7 +119,8 @@ function routeEdit(waypoints){
     directionsService = new google.maps.DirectionsService;
     directionsRenderer = new google.maps.DirectionsRenderer({
         map: map,
-        preserveViewport: true, 
+        preserveViewport: true,
+        suppressMarkers: true
     });
     directionsService.route({
         origin: new google.maps.LatLng(positionCenterLat, positionCenterLng),
