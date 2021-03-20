@@ -20,8 +20,6 @@
 </html>
 
 <script type="text/javascript">
-var map;
-var marker;
 var circle;
 var circleUpperLimit;
 var radius;
@@ -31,13 +29,27 @@ var positionCenterLng = 139.7673068;
 var distanceToPoint2;
 var LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
 var mapDiv = document.getElementById("mapCanvas");
+var map = new google.maps.Map(mapDiv, {
+    center: LatLng,
+    zoom: 14,
+});
+var marker = new google.maps.Marker({
+    map: map,
+    position: LatLng,
+    draggable: true,
+    zIndex: 10
+});
 var angle;
 var direction;
 var point1;
 var point2;
 var point3;
-var directionsService;
-var directionsRenderer;
+var directionsService = new google.maps.DirectionsService;
+var directionsRenderer = new google.maps.DirectionsRenderer({
+    map: map,
+    preserveViewport: true,
+    suppressMarkers: true
+});
 
 $(function(){
     setTimeout( function(){
@@ -46,23 +58,10 @@ $(function(){
         );
     },1000);
 
-    map = new google.maps.Map(mapDiv, {
-        center: LatLng,
-        zoom: 14,
-    });
-
-    marker = new google.maps.Marker({
-        map: map,
-        position: LatLng,
-        draggable: true,
-        zIndex: 10
-    });
-
     // markerドラッグ後のイベント
     marker.addListener("dragend", function () {
         rebuilding();
     });
-
 
     var oneSide = Number($('#distanceToRun').val())/4;
     var direction = Number($('#direction').val());
@@ -115,13 +114,6 @@ $(function(){
 
 function routeEdit(waypoints){
 
-    //ルートの生成
-    directionsService = new google.maps.DirectionsService;
-    directionsRenderer = new google.maps.DirectionsRenderer({
-        map: map,
-        preserveViewport: true,
-        suppressMarkers: true
-    });
     directionsService.route({
         origin: new google.maps.LatLng(positionCenterLat, positionCenterLng),
         destination: new google.maps.LatLng(positionCenterLat, positionCenterLng),
