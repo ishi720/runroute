@@ -39,6 +39,7 @@ var marker = new google.maps.Marker({
     draggable: true,
     zIndex: 10
 });
+var marker2;
 var angle;
 var direction;
 var point1;
@@ -71,6 +72,17 @@ $(function(){
     point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
     point3 = vincenty(point2[0],point2[1],-(180-(90-angle))+direction,oneSide);
 
+    marker2 = new google.maps.Marker({
+        map: map,
+        position: new google.maps.LatLng(point2[0], point2[1]),
+        draggable: true,
+        zIndex: 10
+    });
+    // marker2ドラッグ後のイベント
+    marker2.addListener("dragend", function () {
+        $('#distanceToPoint2').val(distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), marker2.getPosition().lng()));
+        rebuilding();
+    });
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
         new google.maps.LatLng(point1[0], point1[1]),
@@ -154,6 +166,10 @@ function rebuilding(){
 
     Polyline.setMap(null);
 
+    marker2.setOptions({
+        position: new google.maps.LatLng(point2[0], point2[1])
+    });
+    
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
         new google.maps.LatLng(point1[0], point1[1]),
