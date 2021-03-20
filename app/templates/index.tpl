@@ -66,6 +66,7 @@ $(function(){
 
     var oneSide = Number($('#distanceToRun').val())/4;
     var direction = Number($('#direction').val());
+    radius = Number($('#distanceToRun').val())/2;
 
     angle = cosineTheorem();
     point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
@@ -80,8 +81,16 @@ $(function(){
     });
     // marker2ドラッグ後のイベント
     marker2.addListener("dragend", function () {
-        $('#distanceToPoint2').val(distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), marker2.getPosition().lng()));
-        rebuilding();
+        var _radius = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), marker2.getPosition().lng());
+
+        if (_radius <= radius) {
+            $('#distanceToPoint2').val(_radius);
+            rebuilding();    
+        } else {
+            marker2.setOptions({
+                position: new google.maps.LatLng(point2[0], point2[1])
+            });
+        }
     });
     var positions = [
         new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -91,7 +100,7 @@ $(function(){
         new google.maps.LatLng(positionCenterLat, positionCenterLng)
     ];
 
-    radius = Number($('#distanceToRun').val())/2;
+
     circle = new google.maps.Circle({
         center: LatLng,
         fillColor: '#ff0000',
