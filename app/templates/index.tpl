@@ -83,6 +83,11 @@ $(function(){
     marker2.addListener("dragend", function () {
         var _radius = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), marker2.getPosition().lng());
 
+        var latDiff = distance(positionCenterLat, positionCenterLng,positionCenterLat, marker2.getPosition().lng());
+        var lngDiff = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), positionCenterLng);
+
+        $('#direction').val(angleBetweenPoints(latDiff,lngDiff,_radius));
+
         if (_radius <= radius) {
             $('#distanceToPoint2').val(_radius);
             rebuilding();    
@@ -294,6 +299,34 @@ function cosineTheorem(){
     var angle = Math.round(Math.acos(radian) * (180/Math.PI));
 
     return 90-angle;
+}
+
+function angleBetweenPoints(a,b,c){
+
+    //余弦定理
+    var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
+
+    //角度に変換
+    var angle = Math.round(Math.acos(radian) * (180/Math.PI));
+    if ( positionCenterLat < marker2.getPosition().lat() ) {
+        if (positionCenterLng < marker2.getPosition().lng()) {
+            //北東
+            angle = 90-angle;
+        } else {
+            //北西
+            angle = 270+angle;
+        }
+    } else {
+        if (positionCenterLng > marker2.getPosition().lng()) {
+            //南西
+            angle = 270-angle;
+        } else {
+            //南東
+            angle = 90+angle;
+        }
+    }
+    return angle;
+
 }
 
 </script>
