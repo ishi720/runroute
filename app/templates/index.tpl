@@ -83,13 +83,11 @@ $(function(){
     marker2.addListener("dragend", function () {
         var _radius = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), marker2.getPosition().lng());
 
-        var latDiff = distance(positionCenterLat, positionCenterLng,positionCenterLat, marker2.getPosition().lng());
-        var lngDiff = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), positionCenterLng);
-
-        $('#direction').val(angleBetweenPoints(latDiff,lngDiff,_radius));
-
         if (_radius <= radius) {
             $('#distanceToPoint2').val(_radius);
+            var latDiff = distance(positionCenterLat, positionCenterLng,positionCenterLat, marker2.getPosition().lng());
+            var lngDiff = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), positionCenterLng);
+            $('#direction').val(angleBetweenPoints(latDiff,lngDiff,_radius));
             rebuilding();    
         } else {
             marker2.setOptions({
