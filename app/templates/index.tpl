@@ -11,8 +11,6 @@
 </head>
 <body>
     <input name="distanceToRun" id="distanceToRun" value="5000">
-    <input name="distanceToPoint2" id="distanceToPoint2" value="1500">
-    <input name="direction" id="direction" value="45">
     <button onclick="routeEdit()">Route Edit</button>
     <div id="mapCanvas"></div>
 
@@ -26,7 +24,7 @@ var radius;
 var Polyline;
 var positionCenterLat = 35.6809591;
 var positionCenterLng = 139.7673068;
-var distanceToPoint2;
+var distanceToPoint2 = 1500;
 var LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
 var mapDiv = document.getElementById("mapCanvas");
 var map = new google.maps.Map(mapDiv, {
@@ -41,7 +39,7 @@ var marker = new google.maps.Marker({
 });
 var marker2;
 var angle;
-var direction;
+var direction = 45;
 var point1;
 var point2;
 var point3;
@@ -65,7 +63,6 @@ $(function(){
     });
 
     var oneSide = Number($('#distanceToRun').val())/4;
-    var direction = Number($('#direction').val());
     radius = Number($('#distanceToRun').val())/2;
 
     angle = cosineTheorem();
@@ -84,10 +81,10 @@ $(function(){
         var _radius = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), marker2.getPosition().lng());
 
         if (_radius <= radius) {
-            $('#distanceToPoint2').val(_radius);
+            distanceToPoint2 = _radius;
             var latDiff = distance(positionCenterLat, positionCenterLng,positionCenterLat, marker2.getPosition().lng());
             var lngDiff = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), positionCenterLng);
-            $('#direction').val(angleBetweenPoints(latDiff,lngDiff,_radius));
+            direction = angleBetweenPoints(latDiff,lngDiff,_radius);
             rebuilding();    
         } else {
             marker2.setOptions({
@@ -163,7 +160,6 @@ function rebuilding(){
 
     //circleUpperLimitを再セット
     var oneSide = Number($('#distanceToRun').val())/4;
-    direction = Number($('#direction').val());
     angle = cosineTheorem();
     point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
     point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
@@ -288,7 +284,7 @@ function cosineTheorem(){
     //3辺の長さ
     var a = Number($('#distanceToRun').val())/4;
     var b = Number($('#distanceToRun').val())/4;
-    var c = Number($('#distanceToPoint2').val());
+    var c = distanceToPoint2;
 
     //余弦定理
     var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
