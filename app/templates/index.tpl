@@ -33,6 +33,9 @@ var map = new google.maps.Map(mapDiv, {
 });
 var marker = new google.maps.Marker({
     map: map,
+    icon: {
+        url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+    },
     position: LatLng,
     draggable: true,
     zIndex: 10
@@ -73,6 +76,9 @@ $(function(){
     marker2 = new google.maps.Marker({
         map: map,
         position: new google.maps.LatLng(point2[0], point2[1]),
+        icon: {
+            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+        },
         draggable: true,
         zIndex: 10
     });
@@ -85,7 +91,7 @@ $(function(){
             var latDiff = distance(positionCenterLat, positionCenterLng,positionCenterLat, marker2.getPosition().lng());
             var lngDiff = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), positionCenterLng);
             direction = angleBetweenPoints(latDiff,lngDiff,_radius);
-            rebuilding();    
+            rebuilding();
         } else {
             marker2.setOptions({
                 position: new google.maps.LatLng(point2[0], point2[1])
@@ -320,7 +326,5 @@ function angleBetweenPoints(a,b,c){
         }
     }
     return angle;
-
 }
-
 </script>
