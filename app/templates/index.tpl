@@ -198,10 +198,6 @@ function rebuilding(){
         strokeWeight: 2
     });
     Polyline.setMap(map);
-
-    if (directionsRenderer.getMap() != null) {
-        directionsRenderer.setMap(null);
-    }
 }
 
 function doRad(x){
