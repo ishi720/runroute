@@ -110,7 +110,7 @@ $(function(){
 
 
     circle = new google.maps.Circle({
-        visible: true,
+        visible: visible,
         center: LatLng,
         fillColor: '#ff0000',
         fillOpacity: .2,
@@ -122,7 +122,7 @@ $(function(){
     });
 
     circleUpperLimit = new google.maps.Circle({
-        visible: true,
+        visible: visible,
         center: LatLng,
         fillColor: '#0000ff',
         fillOpacity: .2,
@@ -134,6 +134,7 @@ $(function(){
     });
 
     Polyline = new google.maps.Polyline({
+        visible: visible,
         path: positions,
         strokeColor: '#00FF00',
         strokeOpacity: 1.0,
@@ -196,7 +197,7 @@ function rebuilding(){
         new google.maps.LatLng(positionCenterLat, positionCenterLng)
     ];
     Polyline = new google.maps.Polyline({
-        visible: true,
+        visible: visible,
         path: positions,
         strokeColor: '#00FF00',
         strokeOpacity: 1.0,
