@@ -54,8 +54,22 @@ var directionsRenderer = new google.maps.DirectionsRenderer({
     suppressMarkers: true
 });
 var visible = true;
+var getParams;
+var centerLatLng;
 
 $(function(){
+
+    getParams = getparam();
+    if (getParams.get("centerLatLng") !== null) {
+        centerLatLng = getParams.get("centerLatLng").split(",").map(Number);
+        positionCenterLat = centerLatLng[0];
+        positionCenterLng = centerLatLng[1];
+        LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
+        marker.setOptions({
+            position: LatLng
+        });
+        map.setCenter(LatLng);
+    }
     setTimeout( function(){
         $('#mapCanvas').css(
             {'width':'100%','height':$(window).height() - 50}
@@ -338,4 +352,10 @@ function displaySwitching() {
     Polyline.setOptions({visible:visible})
 }
 
+function getparam(){
+    var url = new URL(window.location.href);
+    var params = url.searchParams;
+
+    return params;
+}
 </script>
