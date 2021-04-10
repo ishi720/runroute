@@ -11,7 +11,8 @@
 </head>
 <body>
     <input name="distanceToRun" id="distanceToRun" value="5000">
-    <button onclick="routeEdit()">Route Edit</button>
+    <button onclick="routeEdit()">ルートの作成</button>
+    <button onclick="displaySwitching()">ガイド表示の切り替え</button>
     <div id="mapCanvas"></div>
 
 </body>
@@ -52,6 +53,7 @@ var directionsRenderer = new google.maps.DirectionsRenderer({
     preserveViewport: true,
     suppressMarkers: true
 });
+var visible = true;
 
 $(function(){
     setTimeout( function(){
@@ -108,6 +110,7 @@ $(function(){
 
 
     circle = new google.maps.Circle({
+        visible: true,
         center: LatLng,
         fillColor: '#ff0000',
         fillOpacity: .2,
@@ -119,6 +122,7 @@ $(function(){
     });
 
     circleUpperLimit = new google.maps.Circle({
+        visible: true,
         center: LatLng,
         fillColor: '#0000ff',
         fillOpacity: .2,
@@ -192,6 +196,7 @@ function rebuilding(){
         new google.maps.LatLng(positionCenterLat, positionCenterLng)
     ];
     Polyline = new google.maps.Polyline({
+        visible: true,
         path: positions,
         strokeColor: '#00FF00',
         strokeOpacity: 1.0,
@@ -323,4 +328,13 @@ function angleBetweenPoints(a,b,c){
     }
     return angle;
 }
+
+function displaySwitching() {
+    visible = !visible;
+
+    circle.setOptions({visible:visible})
+    circleUpperLimit.setOptions({visible:visible})
+    Polyline.setOptions({visible:visible})
+}
+
 </script>
