@@ -183,6 +183,8 @@ function rebuilding(){
     positionCenterLat = marker.getPosition().lat();
     positionCenterLng = marker.getPosition().lng();
 
+    setparam("centerLatLng",positionCenterLat+","+positionCenterLng);
+
     //circleUpperLimitを再セット
     var oneSide = Number($('#distanceToRun').val())/4;
     angle = cosineTheorem();
@@ -357,5 +359,19 @@ function getparam(){
     var params = url.searchParams;
 
     return params;
+}
+
+function setparam(paramName,setData){
+    setData = encodeURIComponent(setData);
+    var url = new URL(window.location.href);
+    if (url.searchParams.get(paramName) !== null) {
+        var data = encodeURIComponent(url.searchParams.get(paramName));
+        var regexp = new RegExp(paramName+"="+data,"g");
+        url = url.href.replace(regexp, paramName+'='+setData);
+    } else {
+        url.searchParams.set(paramName,setData);
+        url = url.href;
+    }
+    history.replaceState('','',url);
 }
 </script>
