@@ -61,14 +61,16 @@ $(function(){
 
     getParams = getparam();
     if (getParams.get("centerLatLng") !== null) {
-        centerLatLng = getParams.get("centerLatLng").split(",").map(Number);
-        positionCenterLat = centerLatLng[0];
-        positionCenterLng = centerLatLng[1];
-        LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
-        marker.setOptions({
-            position: LatLng
-        });
-        map.setCenter(LatLng);
+        if (decodeURIComponent(getParams.get("centerLatLng")).match(/\d+\.\d+,\d+\.\d+/g)) {
+            centerLatLng = getParams.get("centerLatLng").split(",").map(Number);
+            positionCenterLat = centerLatLng[0];
+            positionCenterLng = centerLatLng[1];
+            LatLng = new google.maps.LatLng(positionCenterLat, positionCenterLng);
+            marker.setOptions({
+                position: LatLng
+            });
+            map.setCenter(LatLng);
+        }
     }
     setTimeout( function(){
         $('#mapCanvas').css(
