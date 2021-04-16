@@ -72,6 +72,8 @@ $(function(){
             map.setCenter(LatLng);
         }
     }
+    setparam("centerLatLng",positionCenterLat+","+positionCenterLng);
+
     setTimeout( function(){
         $('#mapCanvas').css(
             {'width':'100%','height':$(window).height() - 50}
