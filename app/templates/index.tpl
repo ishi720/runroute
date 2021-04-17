@@ -42,8 +42,8 @@ var marker = new google.maps.Marker({
     zIndex: 10
 });
 var marker2;
-var angle;
-var direction = 45;
+var angleRhombus;//ひし形の角度
+var angleWithPoint2 = 0;//中間地点までの角度
 var point1;
 var point2;
 var point3;
@@ -88,10 +88,10 @@ $(function(){
     var oneSide = Number($('#distanceToRun').val())/4;
     radius = Number($('#distanceToRun').val())/2;
 
-    angle = cosineTheorem();
-    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
-    point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
-    point3 = vincenty(point2[0],point2[1],-(180-(90-angle))+direction,oneSide);
+    angleRhombus = cosineTheorem();
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angleRhombus+angleWithPoint2,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angleRhombus)+angleWithPoint2,oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angleRhombus))+angleWithPoint2,oneSide);
 
     marker2 = new google.maps.Marker({
         map: map,
@@ -110,7 +110,7 @@ $(function(){
             distanceToPoint2 = _radius;
             var latDiff = distance(positionCenterLat, positionCenterLng,positionCenterLat, marker2.getPosition().lng());
             var lngDiff = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), positionCenterLng);
-            direction = angleBetweenPoints(latDiff,lngDiff,_radius);
+            angleWithPoint2 = angleBetweenPoints(latDiff,lngDiff,_radius);
             rebuilding();
         } else {
             marker2.setOptions({
@@ -191,10 +191,10 @@ function rebuilding(){
 
     //circleUpperLimitを再セット
     var oneSide = Number($('#distanceToRun').val())/4;
-    angle = cosineTheorem();
-    point1 = vincenty(positionCenterLat, positionCenterLng,90-angle+direction,oneSide);
-    point2 = vincenty(point1[0],point1[1],-(90-angle)+direction,oneSide);
-    point3 = vincenty(point2[0],point2[1],-(180-(90-angle))+direction,oneSide);
+    angleRhombus = cosineTheorem();
+    point1 = vincenty(positionCenterLat, positionCenterLng,90-angleRhombus+angleWithPoint2,oneSide);
+    point2 = vincenty(point1[0],point1[1],-(90-angleRhombus)+angleWithPoint2,oneSide);
+    point3 = vincenty(point2[0],point2[1],-(180-(90-angleRhombus))+angleWithPoint2,oneSide);
     circle.setCenter(new google.maps.LatLng(positionCenterLat,positionCenterLng));
     circle.setRadius(distance(positionCenterLat, positionCenterLng,point2[0], point2[1]));
 
