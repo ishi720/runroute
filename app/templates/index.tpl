@@ -75,11 +75,19 @@ $(function(){
     setparam("centerLatLng",positionCenterLat+","+positionCenterLng);
 
     if (getParams.get("angle") !== null) {
-        if (getParams.get("centerLatLng").match(/\d+/g)) {
+        if (getParams.get("angle").match(/\d+/g)) {
             angleWithPoint2 = Number(getParams.get("angle"));
         }
     }
     setparam("angle",angleWithPoint2);
+
+    if (getParams.get("distanceToPoint2") !== null) {
+        if (getParams.get("distanceToPoint2").match(/\d+/g)) {
+            distanceToPoint2 = Number(getParams.get("distanceToPoint2"));
+        }
+    }
+    setparam("distanceToPoint2",distanceToPoint2);    
+
 
     setTimeout( function(){
         $('#mapCanvas').css(
@@ -119,6 +127,7 @@ $(function(){
             var lngDiff = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), positionCenterLng);
             angleWithPoint2 = angleBetweenPoints(latDiff,lngDiff,_radius);
             setparam("angle",angleWithPoint2);
+            setparam("distanceToPoint2",distanceToPoint2);
             rebuilding();
         } else {
             marker2.setOptions({
