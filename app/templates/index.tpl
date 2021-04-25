@@ -9,7 +9,7 @@
     <script src="//maps.googleapis.com/maps/api/js?key=<{$googleMapApiKey}>"></script>
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
     <script src="./js/customize.js"></script>
-
+    <{if $googleAnalyticsTrackingId}>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<{$googleAnalyticsTrackingId}>"></script>
     <script>
@@ -18,7 +18,7 @@
       gtag('js', new Date());
       gtag('config', '<{$googleAnalyticsTrackingId}>');
     </script>
-
+    <{/if}>
 </head>
 <body>
     <input name="distanceToRun" id="distanceToRun" type="number" value="">
