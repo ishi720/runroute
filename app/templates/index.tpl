@@ -11,7 +11,7 @@
     <script src="./js/customize.js"></script>
 </head>
 <body>
-    <input name="distanceToRun" id="distanceToRun" value="5000">
+    <input name="distanceToRun" id="distanceToRun" value="">
     <button onclick="routeEdit()">ルートの作成</button>
     <button onclick="displaySwitching()">ガイド表示の切り替え</button>
     <div id="mapCanvas"></div>
@@ -57,6 +57,7 @@ var directionsRenderer = new google.maps.DirectionsRenderer({
 var visible = true;
 var getParams;
 var centerLatLng;
+var distanceToRun = 5000;
 
 $(function(){
 
@@ -75,6 +76,16 @@ $(function(){
     }
     setparam("centerLatLng",positionCenterLat+","+positionCenterLng);
 
+
+    if (getParams.get("distanceToRun") !== null) {
+        if (getParams.get("distanceToRun").match(/\d+/g)) {
+            distanceToRun = Number(getParams.get("distanceToRun"));
+        }
+    }
+    $('#distanceToRun').val(distanceToRun);
+    setparam("distanceToRun",distanceToRun);
+
+
     if (getParams.get("angle") !== null) {
         if (getParams.get("angle").match(/\d+/g)) {
             angleWithPoint2 = Number(getParams.get("angle"));
@@ -87,7 +98,10 @@ $(function(){
             distanceToPoint2 = Number(getParams.get("distanceToPoint2"));
         }
     }
-    setparam("distanceToPoint2",distanceToPoint2);    
+    if (distanceToRun < distanceToPoint2 * 2) {
+        distanceToPoint2 = distanceToRun / 2;
+    }
+    setparam("distanceToPoint2",distanceToPoint2);
 
 
     setTimeout( function(){
@@ -98,6 +112,10 @@ $(function(){
 
     // markerドラッグ後のイベント
     marker.addListener("dragend", function () {
+        if (distanceToRun < distanceToPoint2 * 2) {
+            distanceToPoint2 = distanceToRun / 2;
+        }
+        setparam("distanceToPoint2",distanceToPoint2);
         rebuilding();
     });
 
@@ -118,10 +136,10 @@ $(function(){
         draggable: true,
         zIndex: 10
     });
+
     // marker2ドラッグ後のイベント
     marker2.addListener("dragend", function () {
         var _radius = distance(positionCenterLat, positionCenterLng,marker2.getPosition().lat(), marker2.getPosition().lng());
-
         if (_radius <= radius) {
             distanceToPoint2 = _radius;
             var latDiff = distance(positionCenterLat, positionCenterLng,positionCenterLat, marker2.getPosition().lng());
