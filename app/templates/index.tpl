@@ -9,6 +9,16 @@
     <script src="//maps.googleapis.com/maps/api/js?key=<{$googleMapApiKey}>"></script>
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
     <script src="./js/customize.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<{$googleAnalyticsTrackingId}>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '<{$googleAnalyticsTrackingId}>');
+    </script>
+
 </head>
 <body>
     <input name="distanceToRun" id="distanceToRun" type="number" value="">

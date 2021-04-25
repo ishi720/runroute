@@ -15,5 +15,6 @@ $smarty->right_delimiter = '}>';
 
 $smarty->assign('pageTitle', 'Edit Run Route');
 $smarty->assign('googleMapApiKey', '');
+$smarty->assign('googleAnalyticsTrackingId', '');
 
 $smarty->display('index.tpl');
