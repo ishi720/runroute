@@ -11,7 +11,7 @@
     <script src="./js/customize.js"></script>
 </head>
 <body>
-    <input name="distanceToRun" id="distanceToRun" value="">
+    <input name="distanceToRun" id="distanceToRun" type="number" value="">
     <button onclick="routeEdit()">ルートの作成</button>
     <button onclick="displaySwitching()">ガイド表示の切り替え</button>
     <div id="mapCanvas"></div>
@@ -196,6 +196,12 @@ $(function(){
     });
 
     Polyline.setMap(map);
+
+    var input = document.getElementById('distanceToRun');
+    input.addEventListener('input', function(){
+        distanceToRun = Number($('#distanceToRun').val());
+        setparam("distanceToRun",distanceToRun);
+    });
 });
 
 
