@@ -68,6 +68,7 @@ var visible = true;
 var getParams;
 var centerLatLng;
 var distanceToRun = 5000;
+var temporaryGuide = false;
 
 $(function(){
 
@@ -145,6 +146,20 @@ $(function(){
         },
         draggable: true,
         zIndex: 10
+    });
+
+
+    marker2.addListener("dragstart", function(){
+        if (!visible && !temporaryGuide) {
+            temporaryGuide = true;
+            displaySwitching();
+        }
+    });
+    marker2.addListener("dragend", function(){
+        if (temporaryGuide) {
+            temporaryGuide = false;
+            displaySwitching();
+        }
     });
 
     // marker2ドラッグ後のイベント
