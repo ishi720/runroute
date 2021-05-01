@@ -1,5 +1,4 @@
 function routeEdit(waypoints){
-
     directionsService.route({
         origin: new google.maps.LatLng(positionCenterLat, positionCenterLng),
         destination: new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -10,13 +9,19 @@ function routeEdit(waypoints){
         ],
         travelMode: google.maps.TravelMode.WALKING
     }, function(response, status) {
-        if (status === google.maps.DirectionsStatus.OK) {
+        if (status == google.maps.DirectionsStatus.OK) {
             directionsRenderer.setMap(map);
-            directionsRenderer.setDirections(response); 
+            directionsRenderer.setDirections(response);
+
+            //生成されたルートの距離を計算
+            var m = 0;
+            for(var i=0; i<response.routes[0].legs.length; i++){
+                m += response.routes[0].legs[i].distance.value; // 距離(m)
+            }
+            calcRouteDistance = m;
         }
     });
 }
-
 
 function rebuilding(){
     //現在のマーカー位置をセットする
@@ -71,7 +76,6 @@ function radDo(x){
 }
 
 function vincenty(lat1,lng1,alpha12,length){
-    var check;
     var Radius_long = 6378137.0;
     var Henpei = 1/298.257222101;
     var Radius_short = Radius_long * (1 - Henpei); // 6356752.314
@@ -168,19 +172,15 @@ function angleBetweenPoints(a,b,c){
     var angle = Math.round(Math.acos(radian) * (180/Math.PI));
     if ( positionCenterLat < marker2.getPosition().lat() ) {
         if (positionCenterLng < marker2.getPosition().lng()) {
-            //北東
-            angle = 90-angle;
+            angle = 90-angle;//北東
         } else {
-            //北西
-            angle = 270+angle;
+            angle = 270+angle;//北西
         }
     } else {
         if (positionCenterLng > marker2.getPosition().lng()) {
-            //南西
-            angle = 270-angle;
+            angle = 270-angle;//南西
         } else {
-            //南東
-            angle = 90+angle;
+            angle = 90+angle;//南東
         }
     }
     return angle;
@@ -189,9 +189,9 @@ function angleBetweenPoints(a,b,c){
 function displaySwitching() {
     visible = !visible;
 
-    circle.setOptions({visible:visible})
-    circleUpperLimit.setOptions({visible:visible})
-    Polyline.setOptions({visible:visible})
+    circle.setOptions({visible:visible});
+    circleUpperLimit.setOptions({visible:visible});
+    Polyline.setOptions({visible:visible});
 }
 
 function getparam(){

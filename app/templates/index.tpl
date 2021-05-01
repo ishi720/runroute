@@ -68,6 +68,7 @@ var visible = true;
 var getParams;
 var centerLatLng;
 var distanceToRun = 5000;
+var calcRouteDistance = 0;//ルートの距離
 var temporaryGuide = false;
 
 $(function(){
