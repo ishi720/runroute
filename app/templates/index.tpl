@@ -130,8 +130,8 @@ $(function(){
         rebuilding();
     });
 
-    var oneSide = Number($('#distanceToRun').val())/4;
-    radius = Number($('#distanceToRun').val())/2;
+    var oneSide = distanceToRun / 4;
+    radius = distanceToRun / 2;
 
     angleRhombus = cosineTheorem();
     point1 = vincenty(positionCenterLat, positionCenterLng,90-angleRhombus+angleWithPoint2,oneSide);

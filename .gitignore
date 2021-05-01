@@ -1,4 +1,6 @@
 /vendor/
+/node_modules/
 /app/templates_c/
 /app/cache/
 /app/node_modules/
+/app/js/*.min.js
