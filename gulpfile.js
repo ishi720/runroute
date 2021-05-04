@@ -6,6 +6,7 @@ const uglify = require('gulp-uglify');
 require('gulp-watch');
 const plumber = require('gulp-plumber');
 const browserSync = require('browser-sync').create();
+const del = require('del');
 
 gulp.task('reload', (done) => {
     browserSync.reload();
@@ -19,6 +20,16 @@ gulp.task('browser-sync', () => {
     });
 });
 
+gulp.task('del', function(){
+    return del([
+        'app/templates_c/*',
+        '!app/templates_c/.gitkeep',
+        'app/cache/*',
+        '!app/cache/.gitkeep'
+    ]);
+});
+
+
 //jsをminfyする
 gulp.task('js-minify', () => {
     return gulp.src(['./app/js/*.js', '!./app/js/*.min.js'])
@@ -31,7 +42,8 @@ gulp.task('js-minify', () => {
 
 //ファイル監視
 gulp.task('watch', () => {
-    gulp.watch('app/index.html', gulp.task('reload'));
+    gulp.watch('app/templates/index.tpl', gulp.task('del'));
+    gulp.watch('app/templates/index.tpl', gulp.task('reload'));
     gulp.watch(['./app/js/*.js', '!./app/js/*.min.js'], gulp.task('js-minify'));
 });
 
