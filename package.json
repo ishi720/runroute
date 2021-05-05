@@ -9,6 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "browser-sync": "2.x.x",
+    "del": "6.x.x",
     "gulp": "4.x.x",
     "gulp-plumber": "1.x.x",
     "gulp-rename": "2.x.x",
