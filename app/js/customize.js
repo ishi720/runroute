@@ -1,3 +1,15 @@
+/**
+ * 余弦定理を用いて角度のラジアンを求める
+ * @param {number} a - 一辺の長さ
+ * @param {number} b - 一辺の長さ（対辺）
+ * @param {number} c - 一辺の長さ
+ * @returns {number} ラジアン値
+ */
+function calculateAngleUsingCosineLaw(a, b, c) {
+    const cosValue = (Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * a * c);
+    return Math.acos(cosValue);
+}
+
 function routeEdit(waypoints){
     directionsService.route({
         origin: new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -154,22 +166,17 @@ function cosineTheorem(){
     var b = Number($('#distanceToRun').val())/4;
     var c = distanceToPoint2;
 
-    //余弦定理
-    var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
-
-    //角度に変換
-    var angle = Math.round(Math.acos(radian) * (180/Math.PI));
+    // 余弦定理を用いて角度のラジアンを求める
+    var angle = calculateAngleUsingCosineLaw(a, b, c);
 
     return 90-angle;
 }
 
 function angleBetweenPoints(a,b,c){
 
-    //余弦定理
-    var radian = (Math.pow(a,2) + Math.pow(c,2) - Math.pow(b,2)) / (2*a*c)
+    // 余弦定理を用いて角度のラジアンを求める
+    var angle = calculateAngleUsingCosineLaw(a, b, c);
 
-    //角度に変換
-    var angle = Math.round(Math.acos(radian) * (180/Math.PI));
     if ( positionCenterLat < marker2.getPosition().lat() ) {
         if (positionCenterLng < marker2.getPosition().lng()) {
             angle = 90-angle;//北東
