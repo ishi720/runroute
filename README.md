@@ -25,3 +25,17 @@ $ cd app & yarn install
 googleMapApiKey: "XXXXXXXXXXXXXXXXXXX"
 googleAnalyticsTrackingId: "G-XXXXXXXXX"
 ```
+
+
+
+### 画面イメージ
+
+ルートを設定
+
+![image](https://github.com/user-attachments/assets/059a395b-af67-4b8d-988f-2040856c2d4d)
+
+ルートを作成
+
+![image](https://github.com/user-attachments/assets/5993e6cb-579e-46a9-a6d1-ceae8688d50b)
+
+
