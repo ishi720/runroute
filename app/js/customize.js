@@ -7,7 +7,7 @@
  */
 function calculateAngleUsingCosineLaw(a, b, c) {
     const cosValue = (Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * a * c);
-    return Math.acos(cosValue);
+    return Math.round(Math.acos(cosValue) * (180 / Math.PI));
 }
 
 function routeEdit(waypoints){
