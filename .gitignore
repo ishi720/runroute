@@ -4,3 +4,6 @@
 /app/cache/
 /app/node_modules/
 /app/js/*.min.js
+
+
+/configs/config.yaml

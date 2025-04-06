@@ -18,10 +18,10 @@ $ comoser install
 $ cd app & yarn install
 ```
 
-- GoogleアナリティクスとGoogleマップのAPIキーを設定
+- 設定ファイルの作成
 
 ```php
-# /app/index.php
-$smarty->assign('googleMapApiKey', '');
-$smarty->assign('googleAnalyticsTrackingId', 'G-');
+# /configs/config.yaml
+googleMapApiKey: "XXXXXXXXXXXXXXXXXXX"
+googleAnalyticsTrackingId: "G-XXXXXXXXX"
 ```
