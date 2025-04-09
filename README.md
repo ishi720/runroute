@@ -14,19 +14,23 @@
 
 ```bash
 $ yarn install
-$ comoser install
+$ composer install
 $ cd app & yarn install
 ```
 
 - 設定ファイルの作成
 
-```php
+```yaml
 # /configs/config.yaml
 googleMapApiKey: "XXXXXXXXXXXXXXXXXXX"
 googleAnalyticsTrackingId: "G-XXXXXXXXX"
 ```
 
+- 起動
 
+```bash
+$ yarn gulp
+```
 
 ### 画面イメージ
 
