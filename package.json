@@ -8,7 +8,7 @@
   "author": "ishi720",
   "license": "MIT",
   "dependencies": {
-    "browser-sync": "2.x.x",
+    "browser-sync": "3.x.x",
     "del": "6.x.x",
     "gulp": "5.x.x",
     "gulp-plumber": "1.x.x",
