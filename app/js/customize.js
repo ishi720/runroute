@@ -289,41 +289,84 @@ function radDo(x){
   return x * 180 / Math.PI;
 }
 
-function vincenty(lat1,lng1,alpha12,length){
-    var Radius_long = 6378137.0;
-    var Henpei = 1/298.257222101;
-    var Radius_short = Radius_long * (1 - Henpei); // 6356752.314
+/**
+ * Vincentyの順解法（Direct Method）を使用して、始点から距離と方位角をもとに終点の緯度経度を求める
+ *
+ * @param {number} lat1 - 始点の緯度（度）
+ * @param {number} lng1 - 始点の経度（度）
+ * @param {number} azimuthDeg - 始点での方位角（度、北から時計回り）
+ * @param {number} distance - 始点からの距離（メートル）
+ * @returns {[number, number]} - 終点の [緯度（度）, 経度（度）]
+ *
+ * @example
+ * const [lat2, lng2] = vincenty(35.0, 135.0, 90.0, 10000);
+ * console.log(lat2, lng2); // 東方向に10km進んだ地点の緯度経度
+ */
+function vincenty(lat1, lng1, azimuthDeg, distance) {
+    const a = 6378137.0; // 長半径 (WGS84)
+    const f = 1 / 298.257222101; // 扁平率
+    const b = a * (1 - f); // 短半径
 
     lat1 = doRad(lat1);
     lng1 = doRad(lng1);
-    alpha12 = doRad(alpha12);
-    length = length;
+    const alpha1 = doRad(azimuthDeg);
 
-    var U1 = Math.atan((1 - Henpei) * Math.tan(lat1));
-    var sigma1 = Math.atan( Math.tan(U1) / Math.cos(alpha12));
-    var alpha = Math.asin( Math.cos(U1) * Math.sin(alpha12));
-    var u2 =  Math.pow( Math.cos(alpha),2) * (Math.pow(Radius_long,2) -Math.pow(Radius_short,2)) / Math.pow(Radius_short,2);
-    var A = 1 + (u2/16384)*(4096 + u2 * (-768 + u2 * (320 - 175 * u2)));
-    var B = (u2 / 1024) * (256 + u2 * (-128 + u2 * (74 - 47 * u2)));
-    var sigma = length / Radius_short / A;
+    const U1 = Math.atan((1 - f) * Math.tan(lat1));
+    const sigma1 = Math.atan2(Math.tan(U1), Math.cos(alpha1));
+    const sinAlpha = Math.cos(U1) * Math.sin(alpha1);
+    const cosSqAlpha = 1 - sinAlpha * sinAlpha;
+
+    const uSq = cosSqAlpha * (a * a - b * b) / (b * b);
+    const A = 1 + (uSq / 16384) * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
+    const B = (uSq / 1024) * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
+
+    let sigma = distance / (b * A);
+    let sigmaPrev;
+    let iterations = 0;
+
     do {
-        var sigma0 = sigma;
-        var dm2 = 2 * sigma1 + sigma;
-        var x = Math.cos(sigma) * ( -1 + 2 * Math.pow(Math.cos(dm2),2) ) - B / 6 * Math.cos(dm2) * ( -3 + 4 * Math.pow(Math.sin(dm2),2)) * ( -3 + 4 * Math.pow(Math.cos(dm2),2));
-        var dSigma = B * Math.sin(sigma) * ( Math.cos(dm2) + B / 4 * x);
-        sigma = length / Radius_short / A + dSigma;
-    } while ( Math.abs(sigma0 - sigma)>1e-9 );
+        sigmaPrev = sigma;
+        const twoSigmaM = 2 * sigma1 + sigma;
+        const deltaSigma = B * Math.sin(sigma) * (
+            Math.cos(twoSigmaM) +
+            (B / 4) * (
+                Math.cos(sigma) * (-1 + 2 * Math.pow(Math.cos(twoSigmaM), 2)) -
+                (B / 6) * Math.cos(twoSigmaM) * (-3 + 4 * Math.pow(Math.sin(twoSigmaM), 2)) * (-3 + 4 * Math.pow(Math.cos(twoSigmaM), 2))
+            )
+        );
+        sigma = distance / (b * A) + deltaSigma;
+        iterations++;
+    } while (Math.abs(sigma - sigmaPrev) > 1e-12 && iterations < 100);
 
-    var x = Math.sin(U1) * Math.cos(sigma) + Math.cos(U1) * Math.sin(sigma) * Math.cos(alpha12)
-    var y = (1 - Henpei) * Math.pow ( Math.pow( Math.sin(alpha),2) + Math.pow( Math.sin(U1) * Math.sin(sigma) - Math.cos(U1) * Math.cos(sigma) * Math.cos(alpha12) ,2) , 1 / 2);
-    var lamda = Math.sin(sigma) * Math.sin(alpha12) / (Math.cos(U1) * Math.cos(sigma) - Math.sin(U1) * Math.sin(sigma) * Math.cos(alpha12));
-    lamda = Math.atan(lamda);
-    var C = (Henpei / 16) * Math.pow(Math.cos(alpha),2) * (4 + Henpei * (4 - 3 * Math.pow(Math.cos(alpha),2)));
-    var z = Math.cos(dm2) + C * Math.cos(sigma) * (-1 + 2 * Math.pow(Math.cos(dm2),2) );
-    var omega = lamda - (1 - C) * Henpei * Math.sin(alpha) * (sigma + C * Math.sin(sigma) * z);
-    return [radDo(Math.atan(x / y)),radDo(lng1 + omega)];
+    const sinSigma = Math.sin(sigma);
+    const cosSigma = Math.cos(sigma);
+    const sinU1 = Math.sin(U1);
+    const cosU1 = Math.cos(U1);
+
+    const lat2 = Math.atan2(
+        sinU1 * cosSigma + cosU1 * sinSigma * Math.cos(alpha1),
+        (1 - f) * Math.sqrt(
+            Math.pow(sinAlpha, 2) +
+            Math.pow(sinU1 * sinSigma - cosU1 * cosSigma * Math.cos(alpha1), 2)
+        )
+    );
+
+    const lambda = Math.atan2(
+        sinSigma * Math.sin(alpha1),
+        cosU1 * cosSigma - sinU1 * sinSigma * Math.cos(alpha1)
+    );
+
+    const C = (f / 16) * cosSqAlpha * (4 + f * (4 - 3 * cosSqAlpha));
+    const L = lambda - (1 - C) * f * sinAlpha * (
+        sigma + C * sinSigma * (
+            Math.cos(2 * sigma1 + sigma) + C * cosSigma * (-1 + 2 * Math.pow(Math.cos(2 * sigma1 + sigma), 2))
+        )
+    );
+
+    const lng2 = lng1 + L;
+
+    return [radDo(lat2), radDo(lng2)];
 }
-
 
 function distance($lat1, $lon1, $lat2, $lon2, $mode=true) {
     // 緯度経度をラジアンに変換
@@ -394,31 +437,35 @@ function angleBetweenPoints(a,b,c){
     return angle;
 }
 
+/**
+ * 地図上のガイドの表示・非表示を切り替える
+ * @global {boolean} visible - 表示状態のフラグ（true: 表示、false: 非表示）
+ * @global {object} circle - 地図上の円オブジェクト
+ * @global {object} circleUpperLimit - 地図上の上限円オブジェクト
+ * @global {object} Polyline - 地図上のポリラインオブジェクト
+ */
 function displaySwitching() {
     visible = !visible;
-
     circle.setOptions({visible:visible});
     circleUpperLimit.setOptions({visible:visible});
     Polyline.setOptions({visible:visible});
 }
 
+/**
+ * 現在のURLからクエリパラメータを取得する
+ * @returns {URLSearchParams} クエリパラメータのオブジェクト
+ */
 function getparam(){
-    var url = new URL(window.location.href);
-    var params = url.searchParams;
-
-    return params;
+    const url = new URL(window.location.href);
+    return url.searchParams;
 }
-
-function setparam(paramName,setData){
-    setData = encodeURIComponent(setData);
-    var url = new URL(window.location.href);
-    if (url.searchParams.get(paramName) !== null) {
-        var data = encodeURIComponent(url.searchParams.get(paramName));
-        var regexp = new RegExp(paramName+"="+data,"g");
-        url = url.href.replace(regexp, paramName+'='+setData);
-    } else {
-        url.searchParams.set(paramName,setData);
-        url = url.href;
-    }
-    history.replaceState('','',url);
+/**
+ * 指定された名前と値でURLのクエリパラメータを追加または更新する。
+ * @param {string} paramName - 変更または追加するクエリパラメータ名
+ * @param {string} setData - 設定するパラメータの値（自動でエンコード）
+ */
+function setparam(paramName, setData){
+    const url = new URL(window.location.href);
+    url.searchParams.set(paramName, setData);
+    history.replaceState(null, '', url.toString());
 }
