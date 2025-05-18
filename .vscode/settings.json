@@ -1,0 +1,7 @@
+{
+    "editor.renderWhitespace": "all", // 空白の表示
+    "editor.tabSize": 4, // インデント
+    "files.trimTrailingWhitespace": true, // ファイル末尾の空白削除
+    "terminal.integrated.defaultProfile.windows": "Git Bash", // デフォルトのターミナル
+    "window.title":"${dirty}${activeEditorMedium}${separator}${rootName}" // ファイルPATH表示
+}
