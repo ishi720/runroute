@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><{$pageTitle}></title>
+    <link rel="shortcut icon" type="image/x-icon" href="./images/favicon.ico">
 
     <script src="//maps.googleapis.com/maps/api/js?key=<{$googleMapApiKey}>"></script>
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
