@@ -1,3 +1,5 @@
+'use strict';
+
 var circle;
 var circleUpperLimit;
 var radius;
@@ -30,6 +32,7 @@ var temporaryGuide = false;
 
 $(function(){
     mapDiv = document.getElementById("mapCanvas");
+    getParams = getparam();
     map = new google.maps.Map(mapDiv, {
         center: LatLng,
         zoom: 14,
@@ -44,7 +47,7 @@ $(function(){
         zIndex: 10
     });
 
-    getParams = getparam();
+
     if (getParams.get("centerLatLng") !== null) {
         if (decodeURIComponent(getParams.get("centerLatLng")).match(/\d+\.\d+,\d+\.\d+/g)) {
             centerLatLng = getParams.get("centerLatLng").split(",").map(Number);
@@ -212,7 +215,7 @@ function calculateAngleUsingCosineLaw(a, b, c) {
     return Math.round(Math.acos(cosValue) * (180 / Math.PI));
 }
 
-function routeEdit(waypoints){
+function routeEdit(){
     directionsService.route({
         origin: new google.maps.LatLng(positionCenterLat, positionCenterLng),
         destination: new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -368,40 +371,40 @@ function vincenty(lat1, lng1, azimuthDeg, distance) {
     return [radDo(lat2), radDo(lng2)];
 }
 
-function distance($lat1, $lon1, $lat2, $lon2, $mode=true) {
+function distance(lat1, lon1, lat2, lon2, mode=true) {
     // 緯度経度をラジアンに変換
-    $radLat1 = doRad($lat1); // 緯度１
-    $radLon1 = doRad($lon1); // 経度１
-    $radLat2 = doRad($lat2); // 緯度２
-    $radLon2 = doRad($lon2); // 経度２
+    const radLat1 = doRad(lat1); // 緯度１
+    const radLon1 = doRad(lon1); // 経度１
+    const radLat2 = doRad(lat2); // 緯度２
+    const radLon2 = doRad(lon2); // 経度２
 
     // 緯度差
-    $radLatDiff = $radLat1 - $radLat2;
+    const radLatDiff = radLat1 - radLat2;
 
     // 経度差算
-    $radLonDiff = $radLon1 - $radLon2;
+    const radLonDiff = radLon1 - radLon2;
 
     // 平均緯度
-    $radLatAve = ($radLat1 + $radLat2) / 2.0;
+    const radLatAve = (radLat1 + radLat2) / 2.0;
 
     // 測地系による値の違い
-    $a = $mode ? 6378137.0 : 6377397.155; // 赤道半径
-    $b = $mode ? 6356752.314140356 : 6356078.963; // 極半径
-    //$e2 = ($a*$a - $b*$b) / ($a*$a);
-    $e2 = $mode ? 0.00669438002301188 : 0.00667436061028297; // 第一離心率^2
-    //$a1e2 = $a * (1 - $e2);
-    $a1e2 = $mode ? 6335439.32708317 : 6334832.10663254; // 赤道上の子午線曲率半径
+    const a = mode ? 6378137.0 : 6377397.155; // 赤道半径
+    const b = mode ? 6356752.314140356 : 6356078.963; // 極半径
+    //e2 = (a*a - b*b) / (a*a);
+    const e2 = mode ? 0.00669438002301188 : 0.00667436061028297; // 第一離心率^2
+    //a1e2 = a * (1 - e2);
+    const a1e2 = mode ? 6335439.32708317 : 6334832.10663254; // 赤道上の子午線曲率半径
 
-    $sinLat = Math.sin($radLatAve);
-    $W2 = 1.0 - $e2 * ($sinLat*$sinLat);
-    $M = $a1e2 / (Math.sqrt($W2)*$W2); // 子午線曲率半径M
-    $N = $a / Math.sqrt($W2); // 卯酉線曲率半径
+    const sinLat = Math.sin(radLatAve);
+    const W2 = 1.0 - e2 * (sinLat*sinLat);
+    const M = a1e2 / (Math.sqrt(W2)*W2); // 子午線曲率半径M
+    const N = a / Math.sqrt(W2); // 卯酉線曲率半径
 
-    $t1 = $M * $radLatDiff;
-    $t2 = $N * Math.cos($radLatAve) * $radLonDiff;
-    $dist = Math.sqrt(($t1*$t1) + ($t2*$t2));
+    const t1 = M * radLatDiff;
+    const t2 = N * Math.cos(radLatAve) * radLonDiff;
+    const dist = Math.sqrt((t1*t1) + (t2*t2));
 
-    return $dist;
+    return dist;
 }
 
 function cosineTheorem(){
@@ -415,7 +418,13 @@ function cosineTheorem(){
 
     return 90-angle;
 }
-
+/**
+ * 3点間の角度を余弦定理で求め、地理的な方角に基づいて補正した角度を返す。
+ * @param {Object} a
+ * @param {Object} b
+ * @param {Object} c
+ * @returns {number} 角度（度単位）
+ */
 function angleBetweenPoints(a,b,c){
 
     // 余弦定理を用いて角度のラジアンを求める
