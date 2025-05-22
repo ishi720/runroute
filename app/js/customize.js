@@ -284,13 +284,26 @@ function rebuilding(){
     Polyline.setMap(map);
 }
 
-function doRad(x){
+/**
+ * 度をラジアンに変換する
+ *
+ * @param {number} x - 変換したい角度（度）
+ * @returns {number} ラジアンに変換された角度
+ */
+function degToRad(x) {
   return x / 180 * Math.PI;
 }
 
-function radDo(x){
+/**
+ * ラジアンを度に変換する
+ *
+ * @param {number} x - 変換したい角度（ラジアン）
+ * @returns {number} 度に変換された角度
+ */
+function radToDeg(x) {
   return x * 180 / Math.PI;
 }
+
 
 /**
  * Vincentyの順解法（Direct Method）を使用して、始点から距離と方位角をもとに終点の緯度経度を求める
@@ -310,9 +323,9 @@ function vincenty(lat1, lng1, azimuthDeg, distance) {
     const f = 1 / 298.257222101; // 扁平率
     const b = a * (1 - f); // 短半径
 
-    lat1 = doRad(lat1);
-    lng1 = doRad(lng1);
-    const alpha1 = doRad(azimuthDeg);
+    lat1 = degToRad(lat1);
+    lng1 = degToRad(lng1);
+    const alpha1 = degToRad(azimuthDeg);
 
     const U1 = Math.atan((1 - f) * Math.tan(lat1));
     const sigma1 = Math.atan2(Math.tan(U1), Math.cos(alpha1));
@@ -368,15 +381,15 @@ function vincenty(lat1, lng1, azimuthDeg, distance) {
 
     const lng2 = lng1 + L;
 
-    return [radDo(lat2), radDo(lng2)];
+    return [radToDeg(lat2), radToDeg(lng2)];
 }
 
 function distance(lat1, lon1, lat2, lon2, mode=true) {
     // 緯度経度をラジアンに変換
-    const radLat1 = doRad(lat1); // 緯度１
-    const radLon1 = doRad(lon1); // 経度１
-    const radLat2 = doRad(lat2); // 緯度２
-    const radLon2 = doRad(lon2); // 経度２
+    const radLat1 = degToRad(lat1); // 緯度１
+    const radLon1 = degToRad(lon1); // 経度１
+    const radLat2 = degToRad(lat2); // 緯度２
+    const radLon2 = degToRad(lon2); // 経度２
 
     // 緯度差
     const radLatDiff = radLat1 - radLat2;
