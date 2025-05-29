@@ -6,7 +6,7 @@
 
 ### Badge
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/01605fba6bd240f4bc304a9f26a027fd)](https://www.codacy.com/gh/ishi720/runroute/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ishi720/runroute&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/01605fba6bd240f4bc304a9f26a027fd)](https://app.codacy.com/gh/ishi720/runroute/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ### セットアップ
 
@@ -18,10 +18,9 @@ $ composer install
 $ cd app & yarn install
 ```
 
-- 設定ファイルの作成
+- 設定ファイルの作成(/configs/config.yaml)
 
 ```yaml
-# /configs/config.yaml
 googleMapApiKey: "XXXXXXXXXXXXXXXXXXX"
 googleAnalyticsTrackingId: "G-XXXXXXXXX"
 ```
