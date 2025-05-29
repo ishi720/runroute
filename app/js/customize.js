@@ -17,7 +17,7 @@ var angleWithPoint2 = 0;//中間地点までの角度
 var point1;
 var point2;
 var point3;
-var directionsService = new google.maps.DirectionsService;
+var directionsService = new google.maps.DirectionsService();
 var directionsRenderer = new google.maps.DirectionsRenderer({
     map: map,
     preserveViewport: true,
@@ -35,7 +35,7 @@ $(function(){
     getParams = getparam();
     map = new google.maps.Map(mapDiv, {
         center: LatLng,
-        zoom: 14,
+        zoom: 14
     });
     marker = new google.maps.Marker({
         map: map,
@@ -60,7 +60,7 @@ $(function(){
             map.setCenter(LatLng);
         }
     }
-    setparam("centerLatLng",positionCenterLat+","+positionCenterLng);
+    setparam("centerLatLng", positionCenterLat+","+positionCenterLng);
 
 
     if (getParams.get("distanceToRun") !== null) {
@@ -69,7 +69,7 @@ $(function(){
         }
     }
     $('#distanceToRun').val(distanceToRun);
-    setparam("distanceToRun",distanceToRun);
+    setparam("distanceToRun", distanceToRun);
 
 
     if (getParams.get("angle") !== null) {
@@ -77,7 +77,7 @@ $(function(){
             angleWithPoint2 = Number(getParams.get("angle"));
         }
     }
-    setparam("angle",angleWithPoint2);
+    setparam("angle", angleWithPoint2);
 
     if (getParams.get("distanceToPoint2") !== null) {
         if (getParams.get("distanceToPoint2").match(/\d+/g)) {
@@ -87,7 +87,7 @@ $(function(){
     if (distanceToRun < distanceToPoint2 * 2) {
         distanceToPoint2 = distanceToRun / 2;
     }
-    setparam("distanceToPoint2",distanceToPoint2);
+    setparam("distanceToPoint2", distanceToPoint2);
 
 
     setTimeout( function(){
@@ -101,7 +101,7 @@ $(function(){
         if (distanceToRun < distanceToPoint2 * 2) {
             distanceToPoint2 = distanceToRun / 2;
         }
-        setparam("distanceToPoint2",distanceToPoint2);
+        setparam("distanceToPoint2", distanceToPoint2);
         rebuilding();
     });
 
@@ -166,7 +166,7 @@ $(function(){
         visible: visible,
         center: LatLng,
         fillColor: '#ff0000',
-        fillOpacity: .2,
+        fillOpacity: 0.2,
         map: map,
         radius: distance(positionCenterLat, positionCenterLng,point2[0], point2[1]),//半径(m)
         strokeColor: '#ff0000',
@@ -178,7 +178,7 @@ $(function(){
         visible: visible,
         center: LatLng,
         fillColor: '#0000ff',
-        fillOpacity: .2,
+        fillOpacity: 0.2,
         map: map,
         radius: radius,//半径(m)
         strokeColor: '#0000ff',
@@ -214,7 +214,9 @@ function calculateAngleUsingCosineLaw(a, b, c) {
     const cosValue = (Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * a * c);
     return Math.round(Math.acos(cosValue) * (180 / Math.PI));
 }
-
+/**
+ * Google Maps Directions API を使用して、指定された地点を通る徒歩ルートを作成する。
+ */
 function routeEdit(){
     directionsService.route({
         origin: new google.maps.LatLng(positionCenterLat, positionCenterLng),
@@ -240,12 +242,15 @@ function routeEdit(){
     });
 }
 
+/**
+ * 地図上のマーカー位置を中心に、補助線を再描画する。
+ */
 function rebuilding(){
     //現在のマーカー位置をセットする
     positionCenterLat = marker.getPosition().lat();
     positionCenterLng = marker.getPosition().lng();
 
-    setparam("centerLatLng",positionCenterLat+","+positionCenterLng);
+    setparam("centerLatLng", positionCenterLat+","+positionCenterLng);
 
     //circleUpperLimitを再セット
     var oneSide = Number($('#distanceToRun').val())/4;
@@ -291,7 +296,7 @@ function rebuilding(){
  * @returns {number} ラジアンに変換された角度
  */
 function degToRad(x) {
-  return x / 180 * Math.PI;
+    return x / 180 * Math.PI;
 }
 
 /**
@@ -301,7 +306,7 @@ function degToRad(x) {
  * @returns {number} 度に変換された角度
  */
 function radToDeg(x) {
-  return x * 180 / Math.PI;
+    return x * 180 / Math.PI;
 }
 
 
@@ -384,6 +389,17 @@ function vincenty(lat1, lng1, azimuthDeg, distance) {
     return [radToDeg(lat2), radToDeg(lng2)];
 }
 
+/**
+ * 指定された2地点（緯度・経度）の距離を計算する。
+ * 測地系にはWGS84（世界測地系）またはBessel（日本測地系）を選択可能。
+ *
+ * @param {number} lat1 - 地点1の緯度（度単位）
+ * @param {number} lon1 - 地点1の経度（度単位）
+ * @param {number} lat2 - 地点2の緯度（度単位）
+ * @param {number} lon2 - 地点2の経度（度単位）
+ * @param {boolean} [mode=true] - 測地系を指定（true: WGS84（世界測地系）, false: Bessel（日本測地系））
+ * @returns {number} 2地点間の距離（メートル単位）
+ */
 function distance(lat1, lon1, lat2, lon2, mode=true) {
     // 緯度経度をラジアンに変換
     const radLat1 = degToRad(lat1); // 緯度１
@@ -402,10 +418,8 @@ function distance(lat1, lon1, lat2, lon2, mode=true) {
 
     // 測地系による値の違い
     const a = mode ? 6378137.0 : 6377397.155; // 赤道半径
-    const b = mode ? 6356752.314140356 : 6356078.963; // 極半径
-    //e2 = (a*a - b*b) / (a*a);
+    //const b = mode ? 6356752.314140356 : 6356078.963; // 極半径
     const e2 = mode ? 0.00669438002301188 : 0.00667436061028297; // 第一離心率^2
-    //a1e2 = a * (1 - e2);
     const a1e2 = mode ? 6335439.32708317 : 6334832.10663254; // 赤道上の子午線曲率半径
 
     const sinLat = Math.sin(radLatAve);
@@ -420,16 +434,20 @@ function distance(lat1, lon1, lat2, lon2, mode=true) {
     return dist;
 }
 
+/**
+ * 3辺の長さから余弦定理を用いて角度を計算し、90度からその角度を引いた値を返す
+ * @returns {number} 90度から余弦定理で算出した角度を引いた値（ラジアン）
+ */
 function cosineTheorem(){
     //3辺の長さ
-    var a = Number($('#distanceToRun').val())/4;
-    var b = Number($('#distanceToRun').val())/4;
-    var c = distanceToPoint2;
+    const a = Number($('#distanceToRun').val())/4;
+    const b = Number($('#distanceToRun').val())/4;
+    const c = distanceToPoint2;
 
     // 余弦定理を用いて角度のラジアンを求める
-    var angle = calculateAngleUsingCosineLaw(a, b, c);
+    const angle = calculateAngleUsingCosineLaw(a, b, c);
 
-    return 90-angle;
+    return 90 - angle;
 }
 /**
  * 3点間の角度を余弦定理で求め、地理的な方角に基づいて補正した角度を返す。
@@ -438,22 +456,22 @@ function cosineTheorem(){
  * @param {Object} c
  * @returns {number} 角度（度単位）
  */
-function angleBetweenPoints(a,b,c){
+function angleBetweenPoints(a, b, c){
 
     // 余弦定理を用いて角度のラジアンを求める
     var angle = calculateAngleUsingCosineLaw(a, b, c);
 
     if (positionCenterLat < marker2.getPosition().lat()) {
         if (positionCenterLng < marker2.getPosition().lng()) {
-            angle = 90-angle;//北東
+            angle = 90 - angle;//北東
         } else {
-            angle = 270+angle;//北西
+            angle = 270 + angle;//北西
         }
     } else {
         if (positionCenterLng > marker2.getPosition().lng()) {
-            angle = 270-angle;//南西
+            angle = 270 - angle;//南西
         } else {
-            angle = 90+angle;//南東
+            angle = 90 + angle;//南東
         }
     }
     return angle;
